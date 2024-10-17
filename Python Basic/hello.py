@@ -1,13 +1,3 @@
-#print("Hello Python")
-
-#def sum(a,b):
-    #total=a+b
-    #return total
-
-#val = sum(3,5)
-#print(val)
-
-
 ## **ch01_variable.py**
 
 # 주석(comment) : 실행x, 메모
