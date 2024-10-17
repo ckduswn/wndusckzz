@@ -1,116 +1,91 @@
-## Project     : 별다방조선
-## Writer      : 굴히온앤온
-## Company     : 조선대학교
-## Reg_Date    : 2024.10.14
-## Update_data : 2024.10.14
-## License     :
-## Contents    : 콘솔 프로그래밍을 활용한 커피 전문점에서 사용하는 키오스크 개발
+# 주차 타워(앨레베이터)
+# -5층으로 제한
+# -1층마다 차량 1대만 입고
+# - 차량번호는 숫자 4자리 ex)5001
 
+# 기능
+# 1. 차량 입고
+# 2. 차량 출고
+# 3. 차량 조회
+# 4. 종료
 
-# Kiosk
+# 1. 공통 설정
+max_car = 5 # 최대 주차 차량 수
+cnt_car = 0 # 현재 주차되어 있는 차량 수(count)
+ 
+# 2. 주차 타워 생성 -> list[] -> "" 빈칸
+# tower = ["", "", "", "", ""]  # 방법1. 하드코딩(절대 지양)
 
-# 1. 메인 메뉴 출력 : 커피, 스무디, 베이커리
-# 2. 메인 메뉴 선택 : 사용자
-# 3. 서브 메뉴 출력 : 커피, 스무디, 베이커리
-# 4. 서브 메뉴 선택 : 사용자
-# 5. 고객 주문 메뉴 목록에 저장 : 선택한 서브 메뉴 #오늘끗
-# 6. 추가 주문 여부? : yes or no # 숙제(않되..!)
-# 7-1. yes : 1번으로 보내기
-# 7-2. no : 최종주문 내역으로 보내기
-# 8. 최종주문 내역 출력
+# 방법2. for문 활용
+# tower = []
+# for i in range(max_car):
+#     tower.append("")
+    
+# 방법3. 리스트 컴프리헨슨
+# 모든 for문을 이거로 변경은 불가. 심플한 거만 ㄱㄴㄸ.
+tower = ["" for i in range(max_car)]
 
+# 3. 메뉴 출력
+print("="*50)
+print("== 주차 타워 시스템 ver 1.0==")
+print("="*50)
+print("= 1. 차량 입고")
+print("= 2. 차량 출고")
+print("= 3. 차량 조회")
+print("= 4. 종료")
+print("="*50)
 
-
-from service_kiosk import print_menu, select_menu
-
-
-################
-## 메뉴 만들기 ##
-################
-
-main_menu = {
-    1 : "coffee",
-    2 : "smoothie",
-    3 : "bakery"
-}
-
-coffee_menu = {
-    1 : "americano",
-    2 : "espresso"
-}
-
-coffee_price = {
-    1 : 3500,
-    2 : 4000
-}
-
-smoothie_menu = {
-    1 : "Kiwi smoothie",
-    2 : "Banana smoothie",
-    3 : "Blueberry smoothie",
-    4 : "Strawberry smoothie"
-}
-
-smoothie_price = {
-    1 : 6000,
-    2 : 6000,
-    3 : 6000,
-    4 : 6000
-}
-
-bakery_menu = {
-    1 : "cloud bread",
-    2 : "crepe cake",
-    3 : "tiramisu"
-}
-
-bakery_price = {
-    1 : 3500,
-    2 : 4500,
-    3 : 6500,
-}
-
-
-order_list = []     # 고객 주문 기록
+# 4. 메뉴 선택
+# 사용자는 1~4번까지 입력
+# 사용자가 입력한 값은 select_num 변수에 저장
+# 사용자가 1~4 이외의 값을 넣으면 경고메세지 출력 후 다시 입력 받기
 
 while True:
-## 1. 메인메뉴 출력
-    print("*"*50)
-    print("** 별다방조선")
-    print_menu(main_menu, 3)
-
-
-    ## 2. 메인메뉴 선택
-    order = select_menu(3)
+    select_num = int(input(">> 번호:"))
+    if 4 >= select_num >= 1:
+        break
+    else:
+        print("올바른 값을 입력하세요.")
+        
+      
+# 5. 메뉴 서비스
+# select_num이 1, 2, 3, 4, 인 경우
+if  select_num == 1:
+    # 도메인 지식 -> 비즈니스 로직
+    # 1. 주차공간 유무 확인
+    #    y : 다음스텝 / n : "만차띠예"
+    if max_car > cnt_car:    # max_car : 5로 고정. 
+        # 2. 차량번호 입력
+        #    + 유효성 체크(숫자만, 4자리수만) -> 정규식(re) 공부해올 것!
+        num_car = input(">> 차량번호: ")
+        # 3. 주차타워 입고(tower[]에 저장)
+        #    + 주차타워 빈 공간 서치
+        for i in range(max_car):
+            if tower[i] == "":
+                tower[i] = num_car
+                cnt_car += 1
+                break
+        #    + 빈 공간에 값 저장
+        # 4. 현재 주차된 차량 수 최신화 => cnt_car + 1
     
-    ## 3. 서브메뉴 출력
-    if order == 1:  #coffee
-        print_menu(coffee_menu, 2) 
-        sub_order = select_menu(2) 
-        # [[menu, price], [menu, price]]
-        order_list.append([coffee_menu[sub_order], coffee_price[sub_order]])
-    elif order == 2:  #smoothie
-        print_menu(smoothie_menu, 4) 
-        sub_order = select_menu(4)         
-        order_list.append([smoothie_menu[sub_order], smoothie_price[sub_order]])
-    elif order == 3:  #bakery
-        print_menu(bakery_menu, 3) 
-        sub_order = select_menu(3)         
-        order_list.append([bakery_menu[sub_order], bakery_price[sub_order]])
-
-# 6번 추가 주문하시겠습니까? -> input()
-# 결과 y/n
-# y : 1번으로 이동
-# n : 출력("주문 페이지로 이동합니다.")
-
-    plus = input("추가 주문하시겠습니까?\n")
-    if plus == 'y':
-        print_menu(main_menu, 3)
-    if plus == 'n':
-        print("주문 페이지로 이동합니다..")
+    else:
+        print("만차띠예!")
+        
+       
+    elif select_num == 2: # 출고는 숙제
+    # 1. 출고 차량 번호 입력 ex) 5789
+    # 2. 입력한 번호로 주차타워 검색
+    #    y : 다음스텝 / x : "주차되지 않은 차량번호입니다."
+    # 3. 차량 출고 -> tower[] -> ""
+    # 4. 현재 주차수 - 1
     
-
-    for item in order_list:
-        print(f"주문기록: {item}")
-
+    elif select_num == 3:
+    pass
+# range(시작, 끝, 인터벌) -> range(0, 5, 1)   = 0, 1, 2, 3, 4 
+#                        -> range(4, -1, -1) = 4, 3, 2, 1, 0    
+    for i in range(max_car-1, -1, -1):
+            print(f"{i+1}층: {tower[i]}")
+elif select_num == 4:
+        print("프로그램을 종료합니다.")
+        exit() 
 
