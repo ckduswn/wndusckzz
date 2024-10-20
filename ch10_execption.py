@@ -74,7 +74,7 @@ from urllib.request import urlopen, HTTPError
 # except HTTPError:
 # except: -> 모든 예외 처리
 #try:
-#    html urlopen("http://www.naver.com")
+#    html = urlopen("http://www.naver.com")
 #except: HTTPError as e:
 #    print(e)  ## 예외처리X, 예외 관련 내용 출력
 #else:
@@ -84,7 +84,7 @@ from urllib.request import urlopen, HTTPError
     
     
 try:
-    html urlopen("http://www.naver.com")
+    html = urlopen("http://www.naver.com")
 except: 
     print("올바른 URL을 입력해주세요.")  ## 예외처리
 else:
