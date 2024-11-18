@@ -2,7 +2,7 @@ from connection import connection
 
 # MariaDB에 수집한 뉴스 저장
 def insert_news(data:dict):
-    # 1. Connection (P-D 연결)
+    # 1. Connection (Python-Database 연결)
     conn = connection() 
     try:
         # 2. Cursor 객체 생성(일꾼 생성)
