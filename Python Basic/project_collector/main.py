@@ -43,7 +43,7 @@ def main():
     if flag:
         now=datetime.now().strftime("%Y%m%d%H%M%S")
         st.download_button(
-            Label="다운로드",
+            label="다운로드",
             data=news_csv,
             file_name=f"실시간뉴스_{now}.csv",
             mime="text/csv",
