@@ -39,3 +39,10 @@ INSERT INTO tbl_book(book_name, book_writer, book_publisher, book_price) VALUES(
 INSERT INTO tbl_book(book_name, book_writer, book_publisher, book_price) VALUES("이것이 MySQL이다", "우재남", "한빛미디어", 32000);
 COMMIT;
 SELECT * FROM tbl_book;
+
+# 도서 검색 쿼리
+# - where : 조건절. 필터링 - if 조건1, 조건2
+select*from tbl_book
+where book_name like "%python%" # % 써주면 파이썬 들어간 모든 책 검색해줌
+or book_writer like "%python%"
+or book_publisher like "%python%"
