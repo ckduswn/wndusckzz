@@ -81,7 +81,7 @@ st. markdown("<hr>", unsafe_allow_html=True)
 #################
 def main_page():
     # [ 전체 도서 데이터 조회]
-        rows=book_service.get_books() 
+    rows=book_service.get_books() 
     # [ 도서 검색 ]
     with st.form("search_form"):
         keyword=st.text_input("도서검색")
@@ -91,22 +91,90 @@ def main_page():
             st.write(f'"{keyword}"로 검색한 결과는 총 {len(rows)}건 입니다.')
     event = st.dataframe(rows,
                        on_select="rerun",
-                       selection_mode="simgle-row", # 하나만 선택 가능. Multi-col : 다중선택
+                       selection_mode="single-row", # 하나만 선택 가능. Multi-col : 다중선택
                        use_container_width=True,    # 가로 길이 폭. True : 가장 큰 폭.
                        hide_index=True)             # 인덱스 숨김.
-    
-
+    if len(event.selection["row"]):
+        # 수정, 삭제에선 사용자가 선택한 값이 필요!
+        # → 사용자가 선택한 idx의 행(row)값을 가져오기.
+        selected_idx=event.selection["row"][0]
+        book_isbn=rows.iloc[selected_idx]["book_isbn"]
+        book_name=rows.iloc[selected_idx]["book_name"]
+        book_writer=rows.iloc[selected_idx]["book_writer"]
+        book_publisher=rows.iloc[selected_idx]["book_publisher"]
+        book_price=rows.iloc[selected_idx]["book_price"]
+        register_at=rows.iloc[selected_idx]["register_at"]
+        useyn=rows.iloc[selected_idx]["useyn"]
+        
+        data={
+            "book_isbn":book_isbn,
+            "book_name":book_name,
+            "book_writer":book_writer,
+            "book_publisher":book_publisher,
+            "book_price":book_price,
+            "register_at":register_at,
+            "useyn":useyn
+        }
+        # data를 update 페이지에서도 활용하기 위해 공용저장소에 저장
+        st.session_state["data"]=data
+        if st.button("수정"):
+            navigate_to("update")
+        if st.button("삭제"):
+            # 삭제 시 유일하게 식별할 수 있는 값을 사용해서 조건을 주기
+            book_service.delete_book(book_isbn) # DB에서 해당 ISBN의 도서를 삭제
+            navigate_to("main") # refresh → 도서 삭제 후 최신화된 정보 출력
+            # Tip : INSERT(등록), UPDATE(수정), DELETE(삭제) 반드시 refresh
+            
+        
 def insert_page():
-    pass
+    with st.form("insert_form"):
+        book_name=st.text_input("book_name")
+        book_writer=st.text_input("book_writer")
+        book_publisher=st.text_input("book_publisher")
+        book_price=st.text_input("book_price")
+        submitted=st.form_fubmit_button("등록")
+        
+        book={
+            "book_name":book_name,
+            "book_writer":book_writer,
+            "book_publisher":book_publisher,
+            "book_price":book_price}
+
+        if submitted:
+            book_service.insert_book(book)
+            navigate_to("main")
+        
 def update_page():
-    pass
+    row=st.session_state["data"]
+    
+    st.write("도서 수정")
+    with st.form("update_form"):
+        book_isbn=st.text_input("book_isbn", value=row["book_isbn"],disabled=True)
+        book_name=st.text_input("도서명", value=row["book_name"])
+        book_writer=st.text_input("저자", value=row["book_writer"])
+        book_publisher=st.text_input("출판사", value=row["book_publisher"])
+        book_price=st.text_input("가격", value=row["book_price"])
+        register_at=st.text_input("등록일자", value=row["register_at"])
+        useyn=st.text_input("사용유무", value=row["useyn"])
+        submitted=st.form_submit_button("수정")
+        if submitted:
+            book={
+                "book_isbn":book_isbn,
+                "book_name":book_name,
+                "book_writer":book_writer,
+                "book_publisher":book_publisher,
+                "book_price":book_price,
+                "register_at":register_at,
+                "useyn":useyn,
+            }
+            book_service.update_book(book)
 
 ######################
 ##   4. PAGE CTRL   ##
 ######################
-if st.session_state["page"] == "main":
-    main_page()
-elif st.session_state["page"] == "insert":
-    insert_page()
-elif st.session_state["page"] == "update":
-    update_page()
+    if st.session_state["page"] == "main":
+        main_page()
+    elif st.session_state["page"] == "insert":
+        insert_page()
+    elif st.session_state["page"] == "update":
+        update_page()
